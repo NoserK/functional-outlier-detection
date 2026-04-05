@@ -243,8 +243,6 @@ def dir_out(dts: Union[np.ndarray, List[List[float]]],
     dts = np.array(dts)
     data_dim = dts.shape
     
-    print(f"joker dir", end="\n")
-
     if dts.ndim not in [2, 3]:
         raise ValueError("Argument 'dts' must be a 2D or 3D array.")
     
@@ -297,18 +295,12 @@ def dir_out(dts: Union[np.ndarray, List[List[float]]],
         mean_dir_out = np.mean(dir_out_matrix, axis=1)
         var_dir_out = (np.sum(dir_out_matrix**2, axis=(1, 2)) / p) - np.sum(mean_dir_out**2, axis=1)
         
-        # if return_distance:
-        #     ms_matrix = np.column_stack((mean_dir_out.reshape(n, -1), var_dir_out))
-        #     mcd_obj = cov_rob(ms_matrix, method="mcd", nsamp="best")
-        #     robust_cov = mcd_obj['cov']
-        #     robust_mean = mcd_obj['center']
-        #     distance = np.array([mahalanobis(x, robust_mean, np.linalg.inv(robust_cov)) for x in ms_matrix])
         if return_distance:
             ms_matrix = np.column_stack((mean_dir_out.reshape(n, -1), var_dir_out))
             mcd_obj = cov_rob(ms_matrix, method="mcd", nsamp="best")
             robust_cov = mcd_obj['cov']
             robust_mean = mcd_obj['center']
-            distance = np.array([robust_mahalanobis(x, robust_mean, robust_cov) for x in ms_matrix])
+            distance = np.array([mahalanobis(x, robust_mean, np.linalg.inv(robust_cov)) for x in ms_matrix])
 
     
     result = {
